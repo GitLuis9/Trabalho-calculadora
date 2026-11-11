@@ -15,15 +15,19 @@ public class Calculadora {
         // Se for parêntese de fechamento
         else if (atual == ')') {
             // Se a pilha estiver vazia, tem um ')' sobrando sem '(' correspondente
-            if (pilha.vazia()) {
+            if (pilha.isEmpty()) {
                 return false;
             }
-            pilha.pop();
+            try {
+                pilha.pop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     
     // Se no final a pilha não estiver vazia, faltou fechar algum parêntese
-    if (!pilha.vazia()) {
+    if (!pilha.isEmpty()) {
         return false;
     }
     
