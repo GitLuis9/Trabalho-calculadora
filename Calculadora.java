@@ -124,4 +124,83 @@ public String infixaParaPosFixa(String expressaoInfixa) {
         }
         return 0; // Para parênteses ou outros
     }
+
+    public String infixaParaPreFixa(String expressaoInfixa) {
+        // Passo 1: Inverte a string e troca '(' por ')' e ')' por '('
+        StringBuilder invertida = new StringBuilder();
+        for (int i = expressaoInfixa.length() - 1; i >= 0; i--) {
+            char c = expressaoInfixa.charAt(i);
+            if (c == '(') {
+                invertida.append(')');
+            } else if (c == ')') {
+                invertida.append('(');
+            } else {
+                invertida.append(c);
+            }
+        }
+
+        Pilha<Character> pilha = new Pilha<>();
+        StringBuilder saida = new StringBuilder();
+
+        // Passo 2: Processa a string invertida com regras adaptadas para prefixa
+        for (int i = 0; i < invertida.length(); i++) {
+            char atual = invertida.charAt(i);
+
+            // Se for operando (dígito de '0' a '9'), vai direto para a saída
+            if (atual >= '0' && atual <= '9') {
+                saida.append(atual);
+            }
+            // Se for parêntese de abertura, faz push na pilha
+            else if (atual == '(') {
+                pilha.push(atual);
+            }
+            // Se for parêntese de fechamento, desempilha até achar o '('
+            else if (atual == ')') {
+                try {
+                    while (!pilha.isEmpty()) {
+                        char topo = pilha.pop();
+                        if (topo == '(') {
+                            break;
+                        }
+                        saida.append(topo);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            // Se for um operador (+, -, *, /, ^)
+            else if (atual == '+' || atual == '-' || atual == '*' || atual == '/' || atual == '^') {
+                try {
+                    while (!pilha.isEmpty()) {
+                        char topo = pilha.peek();
+                        
+                        // Nota: Na prefixa via reversão, usamos maior estrito (>) para 
+                        // tratar corretamente a associatividade dos operadores
+                        if (topo != '(' && prioridade(topo) > prioridade(atual)) {
+                            saida.append(pilha.pop());
+                        } else {
+                            break;
+                        }
+                    }
+                    pilha.push(atual);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Esvazia o restante da pilha
+        try {
+            while (!pilha.isEmpty()) {
+                saida.append(pilha.pop());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Passo 3: Inverte a string de saída para obter a forma prefixa final
+        return saida.reverse().toString();
+    }
+
+    
 }
